@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			html {
+				background: #018ded url(http://unsplash.it/1500/1000?image=881&blur=50);
+				background-size: cover;
+				font-family: 'helvetica neue';
+				text-align: center;
+				font-size: 10px;
+			}
+
+			body {
+				margin: 0;
+				font-size: 2rem;
+				display: flex;
+				flex: 1;
+				min-height: 100vh;
+				align-items: center;
+			}
+
+			.clock {
+				width: 30rem;
+				height: 30rem;
+				border: 20px solid white;
+				border-radius: 50%;
+				margin: 50px auto;
+				position: relative;
+				padding: 2rem;
+				box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1),
+				inset 0 0 0 3px #efefef, inset 0 0 10px black, 0 0 10px rgba(0, 0, 0, 0.2);
+			}
+
+			.clock-face {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				transform: translateY(-3px);
+			}
+
+			.hand {
+				width: 50%;
+				height: 6px;
+				background: black;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform-origin: 0%;
+				transform: rotate(90deg);
+				transition: all 0.05s;
+				transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+			}
+
+			.second-hand {
+				width: 50%;
+				height: 6px;
+			}
+			.min-hand {
+				width: 40%;
+				height: 8px;
+			}
+
+			.hour-hand {
+				width: 30%;
+				height: 10px;
+			}
+
+			.trans {
+
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="clock">
+			<div class="clock-face">
+				<div class="hand hour-hand trans"></div>
+				<div class="hand min-hand trans"></div>
+				<div class="hand second-hand trans"></div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			var secondHand = document.querySelector('.second-hand');
+			var minsHand = document.querySelector('.min-hand');
+			var hourHand = document.querySelector('.hour-hand');
+
+
+			var secondDeg = 0,
+					minDeg = 0,
+					hourDeg = 0;
+
+			function initDate() {
+				var now = new Date();
+
+				var second = now.getSeconds();
+				var min = now.getMinutes();
+				var hour = now.getHours();
+
+				secondDeg = ((second / 60) * 360) + 90;
+				minDeg = ((min / 60) * 360) + ((second / 60) * 6) + 90;
+				hourDeg = ((hour /12) * 360) + ((min / 60) * 30) + (((second / 60) / 60) * 30) + 90;
+			}
+
+			function updateDate () {
+				secondDeg += (1 / 60) * 360;
+				minDeg += ((1 / 60) / 60) * 360;
+				hourDeg += (((1/ 60) / 60) / 12) * 360;
+
+				secondHand.style.transform = 'rotate('+secondDeg+'deg)';
+				minsHand.style.transform = 'rotate('+minDeg+'deg)';
+				hourHand.style.transform = 'rotate('+hourDeg+'deg)';
+			}
+
+			initDate();
+			setInterval(updateDate, 1000);
+		</script>
+	</body>
+</html>
