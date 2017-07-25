@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<title>Type Ahead</title>
+
+	<style type="text/css">
+		html {
+			box-sizing: border-box;
+			margin: 0px;
+			background: rgb(145, 182, 195);
+			font-family: 'Kaiti', 'SimHei', 'Hiragino Sans GB ', 'helvetica neue';
+			font-size: 20px;
+			font-weight: 200;
+		}
+
+		*, *:before, *:after {
+			box-sizing: inherit;
+		}
+
+		body {
+			display: flex;
+			justify-content: center;
+		}
+
+		.search-form {
+			max-width: 700px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		input.search {
+			padding: 20px;
+			font-family: 'Kaiti', 'helvetica neue';
+			margin: 0;
+			border: 10px solid #f7f7f7;
+			font-size: 40px;
+			text-align: center;
+			width: 120%;
+			/*outline: 2px solid black;*/
+			border-radius: 5px;
+			position: relative;
+			top: 10px;
+			/*left: 10px;*/
+			box-shadow: 0 0 5px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.19);
+		}
+
+		.suggestions {
+			margin: 0px;
+			padding: 0px;
+			position: relative;
+			top: 7px;
+			width: 100%;
+		}
+
+		.suggestions li {
+			background: white;
+			list-style: none;
+			border-bottom: 1px solid #d8d8d8;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.14);
+			margin: 0px;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		span.title {
+			margin-right: 20px;
+			margin-top: 5px;
+			text-align: right;
+			color: #748e94;
+		}
+
+		span.hl {
+			color: green;
+		}
+
+		/*偶数匹配*/
+		.suggestions li:nth-child(even) {
+			transform: perspective(100px) rotateX(3deg) translateY(2px) scale(0.998);
+			background: linear-gradient(to top, #ffffff 0%, #efefef 100%);
+		}
+
+		/*奇数匹配*/
+		.suggestions li:nth-child(odd) {
+			transform: perspective(100px) rotateX(-3deg) translateY(4px);
+			background: linear-gradient(to bottom, #ffffff 0%, #efefef 100%);
+		}
+	</style>
+</head>
+<body>
+	<form action="" class="search-form">
+		<input type="text" class="search" placeholder="诗人名字，关键字" />
+		<ul class="suggestions">
+			<li>输入词句，找一首诗</li>
+		</ul>
+	</form>
+
+	<script type="text/javascript">
+
+		const endpoint = 'https://gist.githubusercontent.com/lg8294/862aa9b50e567dbc68671d8821b70c32/raw/b7be6ab8e7197f4bc9ce02ba3ad5ae0d26e0c512/tangshi.json';
+
+		const poetrys = [];
+		fetch(endpoint).then(blob => {
+			return blob.json();
+		}).then(data => {
+			poetrys.push(...data);
+//			console.table(poetrys);
+		});
+
+		const search = document.querySelector('.search');
+		const suggestions = document.querySelector('.suggestions');
+
+		function findMatches (wordToMatch, poetrys) {
+			return poetrys.filter(poet => {
+				// 正则找出匹配的诗句
+				const regex = new RegExp(wordToMatch, 'gi');
+				const author = poet.detail_author.join('');
+
+				return poet.detail_text.match(regex) || poet.title.match(regex) || author.match(regex);
+			});
+		}
+
+		function displayMatches () {
+			const matchs = findMatches(this.value, poetrys);
+//			console.table(matchs);
+
+			const regex = new RegExp(this.value, 'gi');
+			const html = matchs.map((poet, index) => {
+
+//				console.log(index);
+				// 替换高亮的标签
+				const hl_text = `<span class='hl'>${ this.value }</span>`
+				const text = poet.detail_text.replace(regex, hl_text);
+				const title = poet.title.replace(regex, hl_text);
+				const detail_author = poet.detail_author.length > 0 ? poet.detail_author[0].replace(regex, hl_text) : '';
+
+				return `
+				<li>
+					<span class="poet">${ text }</span>
+					<span class="title">${ title } - ${ detail_author }</span>
+				</li>
+				`;
+			}).join('');
+
+//			console.log(html);
+			suggestions.innerHTML = html;
+		}
+
+		search.addEventListener('change', displayMatches);
+		search.addEventListener('keyup', displayMatches);
+
+
+	</script>
+</body>
+</html>
