@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>HTML5 Canvas 实现彩虹画笔绘画板</title>
+
+	<!--<script type="text/javascript">
+		function draw () {
+			var canvas = document.getElementById('tutorial');
+			if (canvas.getContext) {
+				var ctx = canvas.getContext('2d');
+
+				ctx.fillStyle = 'rgb(200, 0, 0)';
+				ctx.fillRect(10, 10, 55, 50);
+
+				ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
+				ctx.fillRect(30, 30, 55, 50);
+			}
+		}
+	</script>-->
+
+	<style type="text/css">
+		html,
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+
+		canvas {
+			border: 1px solid black;
+			overflow: hidden;
+		}
+
+		.button {
+			position: absolute;
+			box-sizing: border-box;
+			border: 2px solid black;
+			border-radius: 5px;
+			padding: 10px;
+			box-shadow: 0 0 10px #193549;
+			top: 10px;
+			left: 10px;
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<!--<canvas id="tutorial" width="300" height="300"></canvas>-->
+	<div class="button" id="clearBtn">清空</div>
+	<canvas id="draw" width="1920" height="1080"></canvas>
+	<script type="text/javascript">
+		// 1.获取canvas节点
+		const canvas = document.querySelector('#draw');
+
+		if (canvas.getContext) {
+			// 支持
+			var ctx = canvas.getContext('2d');
+			// drawing code here
+		} else {
+			// 不支持
+			// canvas-unsupported code here
+			console.log('canvas-unsupported code here');
+		}
+
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+		let isDrawing = false;
+		let lastX = 0;
+		let lastY = 0;
+
+		ctx.lineWidth = 90;
+		ctx.lineCap = 'round';
+		ctx.lineJoin = 'round';
+		ctx.strokeStyle = '#f00';
+
+		let hue = 0;
+		let direction = true;
+		let x = 0;
+		let y = 0;
+
+		function draw (e) {
+			if (!isDrawing) return;
+			console.log(e);
+
+			x = e.offsetX;
+			y = e.offsetY;
+
+			// 彩虹效果
+			ctx.strokeStyle = `hsl(${ hue }, 90%, 50%)`;
+			if (hue >= 360) hue = 0;
+			hue++;
+
+			// 控制笔触大小
+			if (ctx.lineWidth > 120 || ctx.lineWidth < 10) {
+				direction = !direction;
+			}
+			if (direction) {
+				ctx.lineWidth++;
+			} else {
+				ctx.lineWidth--;
+			}
+
+			// 控制绘制路径
+			ctx.beginPath();
+			ctx.moveTo(lastX, lastY);
+			ctx.lineTo(x, y);
+			ctx.stroke();
+
+			[lastX, lastY] = [x, y];
+
+		}
+		canvas.addEventListener('mousedown', (e) => {
+			isDrawing = true;
+			[lastX, lastY] = [e.offsetX, e.offsetY];
+		});
+
+		canvas.addEventListener('mousemove', draw);
+		canvas.addEventListener('mouseup', () => isDrawing = false);
+		canvas.addEventListener('mouseout', () => isDrawing = false);
+
+		clearBtn.addEventListener('click', () => {
+			console.log('清除');
+//			canvas.height = window.innerHeight;
+//			canvas.width = window.innerWidth;
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+		})
+	</script>
+</body>
+</html>

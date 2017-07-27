@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>Array Cardio 2</title>
+</head>
+<body>
+	请打开Console查看效果；
+	<script type="text/javascript">
+		console.clear();
+//		console.time('aaa');
+//		console.timeEnd();
+//		console.timeStamp('bbb');
+
+		const people = [
+    { name: 'Wes', year: 1988 },
+    { name: 'Kait', year: 1986 },
+    { name: 'Irv', year: 1970 },
+    { name: 'Lux', year: 2015 }
+];
+
+const comments = [
+    { text: 'Love this!', id: 523423 },
+    { text: 'Super good', id: 823423 },
+    { text: 'You are the best', id: 2039842 },
+    { text: 'Ramen is my fav food ever', id: 123523 },
+    { text: 'Nice Nice Nice!', id: 542328 }
+];
+		//1.是否至少有一人年满19周岁？
+		console.log('1.是否至少有一人年满19周岁？');
+		const isAdult = people.some(function (peo, index, arr) {
+			const currentYear = new Date().getYear();
+			if (currentYear - peo.year >= 19) {
+				return true;
+			}
+		});
+		console.log(isAdult);
+
+		//2.是否每一个人都年满19周岁？
+		console.log('2.是否每一个人都年满19周岁？');
+		const everyAdult = people.every(person => (new Date().getYear() - person.year) >= 19);
+		console.log(everyAdult);
+
+		//3.是否存在id=823423的评论？
+		console.log('3.是否存在id=823423的评论？');
+		const findComment = comments.find(comment => comment.id === 823423);
+		console.log(findComment);
+		console.table(findComment);
+
+		//4.找到id=823423的评论的序列号(下标)。
+		console.log('4.找到id=823423的评论的序列号(下标)。');
+		const findCommentIndex = comments.findIndex(comment => comment.id === 823423);
+		console.log(findCommentIndex);
+
+		//5.删除id=823423的评论。
+		console.log('5.删除id=823423的评论。');
+		console.table(comments);
+
+		//方法一
+		const newComments = [...comments.slice(0,findCommentIndex), ...comments.slice(findCommentIndex+1)];
+		console.table(newComments);
+
+		//方法二
+		comments.splice(findCommentIndex,1);
+		console.table(comments);
+	</script>
+</body>
+</html>
