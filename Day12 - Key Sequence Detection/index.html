@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>键盘输入序列的验证指南</title>
+
+	<script type="text/javascript" src="http://www.cornify.com/js/cornify.js"></script>
+</head>
+<body>
+	<div style="font-size: 20px; color: green;">请输入：ligang</div>
+
+	<div class="input_word_pre" style="font-size: 40px; color: red;"></div>
+	<div class="input_word_af" style="font-size: 40px; color: blue;"></div>
+	<script type="text/javascript">
+		//1.指定可激发特效的字符串
+		const pressed = [];
+		const secretCode = 'ligang';
+
+		//2.检测字符串变化
+		const input_pre = document.querySelector('.input_word_pre');
+		const input_af = document.querySelector(".input_word_af");
+
+		input_pre.innerText = pressed.join('');
+		input_af.innerText = pressed.join('');
+
+		//3.事件监听
+		window.addEventListener('keyup', (e) => {
+			//4.正则表达式判断字符串输入
+			const regex = new RegExp('[A-z]', 'gi');
+			if (e.key.length === 1 && e.key.match(regex)) {
+				console.log(e.key);
+				pressed.push(e.key);
+				input_pre.innerText = pressed.join("");
+
+				//5.处理输入，在符合条件时，调用 cornify_add()
+				pressed.splice(0, pressed.length - secretCode.length);
+
+				input_af.innerText = pressed.join('');
+				if (pressed.join('').includes(secretCode)) {
+					console.log("DING DING")
+					cornify_add();
+				}
+				console.log(pressed);
+			}
+		});
+
+
+
+
+
+	</script>
+</body>
+</html>

@@ -7,7 +7,13 @@
 	<body>
 		<style type="text/css">
 			input {
-				height: 100px;
+				-webkit-appearance: none;
+				width: 500px;
+				/*height: 10px;*/
+				border-radius: 10px;
+				/*background: yellow;*/
+				background: -webkit-linear-gradient(#059cfa, #059cfa) no-repeat;
+				background-size: 0% 100%;
 			}
 			input::-webkit-slider-container {
 				/*height: 110px;
@@ -16,13 +22,25 @@
 				/*background: red;*/
 			}
 			input::-webkit-slider-runnable-track {
-				background: green;
-				/*height: 5px;*/
+				height: 15px;
+				border-radius: 10px;
+				/*background: green;*/
+				box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112;
+				/*height: 10px;*/
+				/*outline: 1px dotted;*/
 			}
 			input::-webkit-slider-thumb {
-				color: blue;
+				-webkit-appearance: none;
+        height:25px;
+        width: 25px;
+        margin-top: -5px;
+        border: solid .125em rgba(205, 224, 230, 0.5);
+        border-radius: 50%;
+        background: #fff;
+        cursor: pointer;
+        box-shadow: 0 .125em .125em #3b4547;
 			}
-			
+
 			div {
 				height: 100px;
 				width: 200px;
