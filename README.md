@@ -11,7 +11,7 @@ JavaScirpt30 是 Wes Bos 推出的一个 30 天挑战。项目免费提供了 30
 
 - [JavaScript30 官网](https://javascript30.com)：进入官网注册后可以观看和下载所有教程视频。Wes Bos 还把视频传到了百度云，进入官网直接拉到页面底部就能找到链接。
 
-## 目录
+## [目录](http://lg8294.github.io/JavaScript30/index.html)
 
 1. [x] [JavaScript Drum Kit  指南]() |  [纯 JS 模拟敲鼓效果](http://lg8294.github.io/JavaScript30/Day01%20-%20JavaScript%20Drum%20Kit/index.html)
 2. [x] [JS + CSS Clock 指南]() |  [纯 JavaScript+CSS 时钟效果](http://lg8294.github.io/JavaScript30/Day02%20-%20JavaScript%20%2B%20CSS%20Clock/index.html)
