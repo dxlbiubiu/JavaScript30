@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>摄像、拍照，滤镜</title>
+	</head>
+	<body>
+		<div class="photobooth">
+			<div class="controls">
+				<button onclick="takePhoto()">Take Photo</button>
+				<div class="rgb">
+					<label for="rmin">Red Min</label>
+					<input type="range" name="rmin" id="" min="0" max="255">
+					<lable for="rmax">Red Max:</lable>
+					<input type="range" name="rmax" id="" min="0" max="255">
+					<br>
+
+					<label for="gmin">Green Min</label>
+					<input type="range" name="gmin" id="" min="0" max="255">
+					<lable for="gmax">Green Max:</lable>
+					<input type="range" name="gmax" id="" min="0" max="255">
+					<br>
+
+					<label for="bmin">Blue Min</label>
+					<input type="range" name="bmin" id="" min="0" max="255">
+					<lable for="bmax">Red Max:</lable>
+					<input type="range" name="bmax" id="" min="0" max="255">
+				</div>
+			</div>
+
+			<canvas class="photo"></canvas>
+			<video class="player"></video>
+			<div class="strip"></div>
+		</div>
+
+		<audio class="snap" src="http://wesbos.com/demos/photobooth/snap.mp3" hidden></audio>
+
+
+	</body>
+	<script>
+		
+		const video = document.querySelector('.player');
+		const canvas = document.querySelector('.photo');
+		const ctx = canvas.getContext('2d');
+		const strip = document.querySelector('.strip');
+		const snap = document.querySelector('.snap');
+
+		// 获取影像
+		function getVideo() {
+			navigator.mediaDevices.getUserMedia({video:true, audio:false})
+				.then(videostreem => {
+					console.log(videostreem);
+					video.src = URL.createObjectURL(videostreem);
+					video.play();
+				})
+				.catch((error) => {
+					console.error('没有权限使用你的摄像头！', error);
+				})
+		}
+
+		// canvas绘图
+		function printToCanvas() {
+			let width = video.videoWidth;
+			let height = video.videoHeight;
+			canvas.height = height;
+			canvas.width = width;
+
+			console.log(width, height);
+
+			return setInterval(() => {
+				ctx.drawImage(video, 0, 0, width, height);
+
+				// 获取图片数据
+				let imagedata = ctx.getImageData(0,0,width,height);
+				console.log(imagedata);
+
+				imagedata = greenScreen(imagedata);
+
+				//
+				ctx.putImageData(iamgedata,0,0);
+			}, 16)
+		}
+
+		// 摄像记录导出到canvas中
+		function takePhoto() {
+			// 播放音效
+			snap.currentTiem = 0;
+			snap.play();
+
+			// 获取图像数据
+			let data = canvas.toDataURL('image/jpeg');
+			console.log(data);
+
+			let link = document.createElement('a');
+			link.href = data;
+			link.setAttribute('downlond', 'handsome');
+			link.innerHTML = `<img src=${data} alt=handsome`;
+			strip.insertBefore(link, strip, firstChild);
+		}
+
+		// 自定义滤镜
+		// 红色特效滤镜
+		function redEffect(imagedata) {
+			for(let i = 0; i < imagedata.data.length; i+=4) {
+				imagedata.data[i + 0] += 200;//red
+				imagedata.data[i + 1] -= 50;//green
+				imagedata.data[i + 2] *= 0.5;//blue
+			}
+			return imagedata;
+		}
+		// RGB分离
+		function rgbsplit(imagedata) {
+			for(let i = 0; i < imagedata.data.length; i+=4) {
+				imagedata.data[i - 100] = imagedata.data[i + 0]; //red
+				imagedata.data[i + 150] = imagedata.data[i + 1]; //green
+				imagedata.data[i - 150] = imagedata.data[i + 2]; //blue
+			}
+			return imagedata;
+		}
+		// 绿屏（部分消失）
+		function greenScreen(imagedata) {
+			const levels = {};
+
+			document.querySelectorAll('.rgb input').forEach((input) => {
+				levels[input.name] = input.value;
+			});
+
+			for(let i = 0; i < imagedata.data.length; i+=4) {
+				red = imagedata.data[i + 0];
+				green = imagedata.data[i + 1];
+				blue = imagedata.data[i + 2];
+				alpha = imagedata.data[i + 3];
+
+				if (red >= levels.rmin 
+					&& green >= levels.gmin 
+					&& blue >= levels.bmin 
+					&& red <= levels.rmax
+					&& green <= levels.gmax
+					&& blue <= levels.bmax
+				) {
+					imagedata.data[i + 3] = 0;
+				}
+			}
+			return imagedata;
+		}
+
+		getVideo();
+		video.addEventListener('canplay', printToCanvas);
+	</script>
+</html>
